@@ -1,3 +1,21 @@
+# Go语言语法基础
+## Label
+* [goto](./code/label/goto/main.go)
+    - 和C语言一样，可直接跳转到指定标签位置，往下执行
+    - 不同于break和continue，goto的标签可以指定为任何语句，包括空语句。
+* [break](./code/label/break/main.go)
+    - 不同于goto标签，break标签只能指定`for`、`switch`和`select`语句，并且`break`语句只能跳转到当前语句的外部，如下面的代码时无法编译通过的：
+    ```
+    FirstLoop:
+        for i := 0; i < 10; i++ {
+        }
+        for i := 0; i < 10; i++ {
+            break FirstLoop
+        }
+    ```
+* [continue](./code/label/continue/main.go)
+    - 不同于break标签，continue标签只能修饰`foo`，因为另外两个没办法循环执行
+
 # Go语言各种包的用法
 ## flag
 * [flag](./code/flag/main.go)
