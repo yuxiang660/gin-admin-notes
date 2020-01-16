@@ -30,3 +30,32 @@
     - cancelContext需要主动调用`cancel`，信号量才会`Done`。另外两种除了主动调用`cancel`外，时间到了，也会`Done`。
 * [context-for-data](./code/context/value.go)
     - `context.WithValue()`是向子线程传递数据的方法，由于没有`cacel`机制，无法控制子线程的运作。
+
+# Gin Web Framework
+## 接收用户传过来的数据
+* [gin-input-from-url-query-string](./code/gin/input/query-string.go)
+    - 在浏览器中输入:
+    > localhost:8085/testing?name=appleboy&address=xyz&birthday=1992-03-15
+    - URL可以带[query string](https://en.wikipedia.org/wiki/Query_string)的
+    - 对GET请求，gin只启用`Form`组件解析`query string`
+    - `c *gin.Context`是回调函数接收的参数
+    - `c.ShouldBind(&person)`接受`gin.Context`赋值
+    - `type Persion struct`定义了`Form`结构，定义key-value，和顺序无关
+* [gin-output-with-json](./code/gin/output/main.go)
+    - 在浏览器中输入以下测试数据：
+    ```
+    1.http://localhost:8080/getb?field_a=hello&field_b=world
+      输出：{"a":{"FieldA":"hello"},"b":"world"}
+    2.http://localhost:8080/getc?field_a=hello&field_c=world
+      输出：{"a":{"FieldA":"hello"},"c":"world"}
+    3.http://localhost:8080/getd?field_x=hello&field_d=world
+      输出：{"d":"world","x":{"FieldX":"hello"}}
+    ```
+    - 第一层的key，代码指定
+    - 第二层的key，代码根据结构体定义推到出来
+    - 嵌入的JSON格式，由三种指定方法：1.内部用结构体；1.内部用结构体指针；2.内部定义结构体；
+* [gin-middleware-process](./code/gin/middleware/main.go)
+    - 新建一个空的gin引擎，`gin.Default()`默认回加上gin自己的Logger
+    - 添加中间件`Logger()`，中间件是一个`HandlerFunc`
+    - 在中间件中，`c.Next()`之前都是Router回调函数之前执行的，之后都是Router回调函数之后执行的
+    - `c.Set()`可以往context中填入[key, value]
