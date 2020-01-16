@@ -23,4 +23,10 @@
     - 命令行数据格式：
     > go run main.go -flagname=flagvalue
 
-
+## context
+* [context-for-sync](./code/context/sync.go)
+    - context可以用做主线程控制子线程的通信机制
+    - 有三种context：cancelContext, timeoutContext, deadlineContext
+    - cancelContext需要主动调用`cancel`，信号量才会`Done`。另外两种除了主动调用`cancel`外，时间到了，也会`Done`。
+* [context-for-data](./code/context/value.go)
+    - `context.WithValue()`是向子线程传递数据的方法，由于没有`cacel`机制，无法控制子线程的运作。
