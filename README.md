@@ -41,6 +41,7 @@
     - `c *gin.Context`是回调函数接收的参数
     - `c.ShouldBind(&person)`接受`gin.Context`赋值
     - `type Persion struct`定义了`Form`结构，定义key-value，和顺序无关
+## 发送JSON数据给客户
 * [gin-output-with-json](./code/gin/output/main.go)
     - 在浏览器中输入以下测试数据：
     ```
@@ -54,8 +55,34 @@
     - 第一层的key，代码指定
     - 第二层的key，代码根据结构体定义推到出来
     - 嵌入的JSON格式，由三种指定方法：1.内部用结构体；1.内部用结构体指针；2.内部定义结构体；
+## 中间件
 * [gin-middleware-process](./code/gin/middleware/main.go)
     - 新建一个空的gin引擎，`gin.Default()`默认回加上gin自己的Logger
     - 添加中间件`Logger()`，中间件是一个`HandlerFunc`
     - 在中间件中，`c.Next()`之前都是Router回调函数之前执行的，之后都是Router回调函数之后执行的
     - `c.Set()`可以往context中填入[key, value]
+
+# Logger logrus
+## 基本输出格式
+* [logger-logrus-hello](./code/logrus/hello/main.go)
+    - 基本输出格式为（field:[animal, walrus]）：
+    > time="2020-01-16T19:16:03+08:00" level=info msg="A walrus appears" animal=walrus
+* [logger-logrus-json](./code/logrus/customize/json-level.go)
+    - 可设置输出格式和输出级别
+* [logger-location-file](./code/logrus/location/file.go)
+    - 可创建多个logger
+    - 可方便输出到文件
+## Hooks
+* `logrus`提供了日志钩子，可以挂上数据库日志操作的钩子函数，这样`logrus`不仅本地能将log打到本地的窗口，也会打印到数据库中。
+* [logrus-log-mongodb](./code/logrus/hook/mongodb.go)
+    - `logrus`的`Hook`接口
+    ```go
+    type Hook interface {
+        Levels() []Level
+        Fire(*Entry) error
+    }
+    ```
+    - `github.com/LyricTian/logrus-mongo-hook/hook.go`实现了这个接口
+    - 因此，`mongohook.DefaultWithURL()`可以产生一个`Hook`，挂到`logrus`上，即可将日志写到数据库中了
+    - 启动程序后，mongodb会多出一条文档信息：
+    > { "_id" : ObjectId("5e20957ab48172e81ec607a7"), "foo-warn" : "bar-wan", "level" : 3, "message" : "test warn", "created" : NumberLong(1579193722) }
