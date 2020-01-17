@@ -93,3 +93,28 @@
     - 安装好sqlite即可运行此程序
     - gorm只支持关系型数据库
     - 连接数据库 -> 绑定数据模型 -> 操作数据库（CQUD）
+
+# JWT
+## JWT概念
+* JWT全称JSON Web Token，是一种加密算法，常用于互联网请求的验证
+* 实现机制
+    - 用户携带用户信息，请求登录服务器
+    - 服务器验证用户信息，如果通过，则产生JWT，并通过Cookie发送回客户端
+    - 客户端收到服务器的回复，存下Cookie
+    - 用户发送其他请求到服务器时，需要携带此Cookie
+    - 服务器处理此请求时，先要验证此Cookie是否有效，才能继续执行
+    - 验证有效后，执行用户请求，并返回
+    ![Token-Based-Auth.png](./code/jwt/Token-Based-Auth.png)
+* 示例代码[go-jwt-server](./code/jwt/server/main.go)，参考[link](https://www.sohamkamani.com/blog/golang/2019-01-01-jwt-authentication/)
+    - 启动服务
+    - 用`Postman`模拟客户端行为
+        - 发送Get请求到：http://localhost:8000/welcome
+        > 收到`401 Unauthorized`错误，因为我们没有登录验证
+        - 发送Post请求到：http://localhost:8000/login , 并带上JSON格式的用户户名密码`{"username":"user1","password":"password2"}`。服务器写死了两个用户：user1和user2。
+        > 验证成功，服务器发送了Cookie给客户端
+        - 打开Postman的`Cookies`串口，发现`localhost`下多了一个`token`Cookie，这就是服务器发送过来的，里面由token信息
+        - 再次发送Get请求到：http://localhost:8000/welcome
+        > 收到 `Welcome user1!`回复
+        - 删除Postman的`token`Cookie
+        - 再次发送Get请求到：http://localhost:8000/welcome
+        > 收到`401 Unauthorized`错误，因为客户端的Cookie被删除了，需要再次登录验证
