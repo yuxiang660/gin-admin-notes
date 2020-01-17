@@ -6,9 +6,13 @@ import (
 	"time"
 )
 
-type favContextKey string
+type (
+	cancelContextKey struct{}
+	timeoutContextKey struct{}
+	deadlineContextKey struct{}
+)
 
-func getName(ctx context.Context, k favContextKey) {
+func getName(ctx context.Context, k interface{}) {
 	if v := ctx.Value(k); v != nil {
 		fmt.Println("Found name:", v)
 		return
@@ -19,15 +23,14 @@ func getName(ctx context.Context, k favContextKey) {
 func main() {
 	fmt.Println("context package 2")
 
-	k := favContextKey("name")
 
-	cancelCxt := context.WithValue(context.Background(), k, "[cancelContext]")
-	timeoutCxt := context.WithValue(context.Background(), k, "[timeoutContext]")
-	deadlineCxt := context.WithValue(context.Background(), k, "[deadlineContext]")
+	cancelCxt := context.WithValue(context.Background(), cancelContextKey{}, "[cancelContext]")
+	timeoutCxt := context.WithValue(context.Background(), timeoutContextKey{}, "[timeoutContext]")
+	deadlineCxt := context.WithValue(context.Background(), deadlineContextKey{}, "[deadlineContext]")
 
-	go getName(cancelCxt, k)
-	go getName(timeoutCxt, k)
-	go getName(deadlineCxt, k)
+	go getName(cancelCxt, cancelContextKey{})
+	go getName(timeoutCxt, timeoutContextKey{})
+	go getName(deadlineCxt, deadlineContextKey{})
 
 	time.Sleep(time.Second)
 }
