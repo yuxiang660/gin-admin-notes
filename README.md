@@ -118,3 +118,47 @@
         - 删除Postman的`token`Cookie
         - 再次发送Get请求到：http://localhost:8000/welcome
         > 收到`401 Unauthorized`错误，因为客户端的Cookie被删除了，需要再次登录验证
+    - login HTTP POST包，申请验证用户
+        - client -> server
+        ```
+        POST /login HTTP/1.1\r\n
+        Content-Type: application/json\r\n
+        User-Agent: PostmanRuntime/7.21.0\r\n
+        Accept: */*\r\n
+        Cache-Control: no-cache\r\n
+        Host: 192.168.50.64:8000\r\n
+        Accept-Encoding: gzip, deflate\r\n
+        Content-Length: 43\r\n
+        Connection: keep-alive\r\n
+
+        {"username":"user1","password":"password1"}
+        ```
+        - server -> client
+        ```
+        HTTP/1.1 200 OK\r\n
+        Response Version: HTTP/1.1
+        Status Code: 200
+        Response Phrase: OK
+        Set-Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIxIiwiZXhwIjoxNTc5MjUzODI2fQ.NYYRmICsUPURGXndOt7gjGvX-x3tvZsjTEyjR453g_M; Expires=Fri, 17 Jan 2020 09:37:06 GMT\r\n
+        ```
+    - 收到验证Cookie后，客户端向服务器发送welcome HTTP GET包
+        - client -> server
+        ```
+        GET /welcome HTTP/1.1\r\n
+        User-Agent: PostmanRuntime/7.21.0\r\n
+        Accept: */*\r\n
+        Cache-Control: no-cache\r\n
+        Postman-Token: b1f6a751-7041-4abf-895b-c0efb56b1dd9\r\n
+        Host: 192.168.50.64:8000\r\n
+        Accept-Encoding: gzip, deflate\r\n
+        Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIxIiwiZXhwIjoxNTc5MjUzODI2fQ.NYYRmICsUPURGXndOt7gjGvX-x3tvZsjTEyjR453g_M\r\n
+        Connection: keep-alive\r\n
+        ```
+        - server -> client
+        ```
+        HTTP/1.1 200 OK\r\n
+        Content-Length: 14\r\n
+        Content-Type: text/plain; charset=utf-8\r\n
+
+        Welcome user1!
+        ```
