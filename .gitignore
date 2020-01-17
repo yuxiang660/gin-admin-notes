@@ -16,3 +16,6 @@
 
 # Log files
 *.log
+
+# sqlite database file
+*.db

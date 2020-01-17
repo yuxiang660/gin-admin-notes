@@ -86,3 +86,10 @@
     - 因此，`mongohook.DefaultWithURL()`可以产生一个`Hook`，挂到`logrus`上，即可将日志写到数据库中了
     - 启动程序后，mongodb会多出一条文档信息：
     > { "_id" : ObjectId("5e20957ab48172e81ec607a7"), "foo-warn" : "bar-wan", "level" : 3, "message" : "test warn", "created" : NumberLong(1579193722) }
+
+# GORM
+## Hello
+* [gorm-sqlite-hello](./code/gorm/hello/main.go)
+    - 安装好sqlite即可运行此程序
+    - gorm只支持关系型数据库
+    - 连接数据库 -> 绑定数据模型 -> 操作数据库（CQUD）
