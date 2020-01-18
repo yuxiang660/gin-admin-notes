@@ -61,6 +61,9 @@
     - 添加中间件`Logger()`，中间件是一个`HandlerFunc`
     - 在中间件中，`c.Next()`之前都是Router回调函数之前执行的，之后都是Router回调函数之后执行的
     - `c.Set()`可以往context中填入[key, value]
+## 静态文件路由配置
+* [gin-static-router-server](./code/gin/static/main.go)
+    - 有三种方法可以配置静态服务路由
 
 # Logger logrus
 ## 基本输出格式
