@@ -165,3 +165,10 @@
 
         Welcome user1!
         ```
+
+# Dig 模块
+* [go-dependency-inject-dig](./code/dig/main.go)，参考[link](https://blog.drewolson.org/dependency-injection-in-go)
+    - 一系列的New函数，返回新建的对象，对象之间可能有相互依赖关系
+    - 将这些New函数按照依赖关系顺序，依次交给`Provide`函数，去构造Dig的Container
+    - 当需要执行的时候，调用`Container.Invoke()`，就可以执行关于新建对象的操作。`Invoke`接受一个函数对象，这个函数可以传入任意个数的新建对象。
+    
