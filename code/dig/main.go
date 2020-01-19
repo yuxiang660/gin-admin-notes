@@ -4,6 +4,8 @@ import (
 	"database/sql"
 	"encoding/json"
 	"net/http"
+	"log"
+	"fmt"
 
 	_ "github.com/mattn/go-sqlite3"
 	"go.uber.org/dig"
@@ -15,13 +17,7 @@ type Config struct {
 	Port string
 }
 
-func NewConfig() *Config {
-	return &Config{
-		Enabled: true,
-		DatabasePath: "./example.db",
-		Port: "8000",
-	}
-}
+
 
 type Person struct {
 	Id int `json:"id"`
@@ -34,7 +30,10 @@ type PersonRepository struct {
 }
 
 func (r *PersonRepository) FindAll() []*Person {
-	rows, _ := r.database.Query(`Select id, name, age FROM people;`)
+	rows, err := r.database.Query(`Select id, name, age FROM people;`)
+	if err != nil {
+		log.Fatal(err)
+	}
 	defer rows.Close()
 
 	people := []*Person{}
@@ -58,9 +57,6 @@ func (r *PersonRepository) FindAll() []*Person {
 	return people
 }
 
-func NewPersonRepository(db *sql.DB) *PersonRepository {
-	return &PersonRepository{database: db}
-}
 
 type PersonService struct {
 	config *Config
@@ -75,9 +71,6 @@ func (service *PersonService) FindAll() []*Person {
 	return []*Person{}
 }
 
-func NewPersonService(c *Config, r *PersonRepository) *PersonService {
-	return &PersonService{config: c, repository: r}
-}
 
 type Server struct {
 	config *Config
@@ -90,6 +83,10 @@ func (s *Server) Handler() http.Handler {
 	mux.HandleFunc("/people", s.findPeople)
 
 	return mux
+}
+
+func (s *Server) Hello() {
+	fmt.Println("Hello")
 }
 
 func (s *Server) Run() {
@@ -110,6 +107,26 @@ func (s *Server) findPeople(w http.ResponseWriter, r *http.Request) {
 	w.Write(bytes)
 }
 
+func NewConfig() *Config {
+	return &Config{
+		Enabled: true,
+		DatabasePath: "./example.db",
+		Port: "8000",
+	}
+}
+
+func NewDatabase(c *Config) (*sql.DB, error) {
+	return sql.Open("sqlite3", c.DatabasePath)
+}
+
+func NewPersonRepository(db *sql.DB) *PersonRepository {
+	return &PersonRepository{database: db}
+}
+
+func NewPersonService(c *Config, r *PersonRepository) *PersonService {
+	return &PersonService{config: c, repository: r}
+}
+
 func NewServer(c *Config, p *PersonService) *Server {
 	return &Server{
 		config: c,
@@ -117,18 +134,14 @@ func NewServer(c *Config, p *PersonService) *Server {
 	}
 }
 
-func ConnectDatabase(c *Config) (*sql.DB, error) {
-	return sql.Open("sqlite3", c.DatabasePath)
-}
-
 func BuildContainer() *dig.Container {
 	c := dig.New()
 
-	c.Provide(NewConfig)
-	c.Provide(ConnectDatabase)
-	c.Provide(NewPersonRepository)
-	c.Provide(NewPersonService)
 	c.Provide(NewServer)
+	c.Provide(NewPersonService)
+	c.Provide(NewPersonRepository)
+	c.Provide(NewDatabase)
+	c.Provide(NewConfig)
 
 	return c
 }
@@ -137,10 +150,18 @@ func main() {
 	c := BuildContainer()
 
 	err := c.Invoke(func(s *Server) {
+		s.Hello()
+	})
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = c.Invoke(func(s *Server) {
 		s.Run()
 	})
 
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 }

@@ -172,6 +172,9 @@
 
 # Dig 模块
 * [go-dependency-inject-dig](./code/dig/main.go)，参考[link](https://blog.drewolson.org/dependency-injection-in-go)
-    - 一系列的New函数，返回新建的对象，对象之间可能有相互依赖关系
-    - 将这些New函数按照依赖关系顺序，依次交给`Provide`函数，去构造Dig的Container
-    - 当需要执行的时候，调用`Container.Invoke()`，就可以执行关于新建对象的操作。`Invoke`接受一个函数对象，这个函数可以传入任意个数的新建对象。
+    - Dig的适用范围：当某对象的依赖较多且逻辑复杂时，可将依赖的构造和初始化的工作交给Dig，通过依赖注入的方式，构造此对象。
+    - Dig实现流程：
+        - 注册依赖构造函数：将所有依赖的构造函数注册给Dig(通过Provide)，单个依赖的构造可以依赖其他依赖。注意，这一步并不会执行依赖的构造（真正的构造是在第一次调用`invoke`的时候），而且Provide调用的顺序也不影响后面的依赖构造顺序。
+        - 完成依赖注册：Dig返回一个`Container`，包含所有依赖的信息。此时，所有的依赖依旧还没有构造。
+        - 调用依赖函数：当第一次调用`Container.Inoke(...)`时，构造所有依赖。`Inoke`函数用于调用所有依赖的方法。
+   
