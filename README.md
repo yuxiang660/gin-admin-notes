@@ -112,6 +112,10 @@
     - 服务器处理此请求时，先要验证此Cookie是否有效，才能继续执行
     - 验证有效后，执行用户请求，并返回
     ![Token-Based-Auth.png](./code/jwt/Token-Based-Auth.png)
+* JWT-Token和Session的区别和联系
+    - 参考[link](https://medium.com/@sherryhsu/session-vs-token-based-authentication-11a6c5ac45e4)
+    - Session验证的`SessionID`是存在服务器端的，而Token验证由Token自己就可以完成，不需要再利用服务器端的存储信息进行验证。
+    - 不需要在服务器端存储验证信息，是JWT-Token方式的最大优势。
 * 示例代码[go-jwt-server](./code/jwt/server/main.go)，参考[link](https://www.sohamkamani.com/blog/golang/2019-01-01-jwt-authentication/)
     - 启动服务
     - 用`Postman`模拟客户端行为
@@ -169,6 +173,30 @@
 
         Welcome user1!
         ```
+
+# OAuth2
+## OAuth2概念
+OAuth是一种授权机制。数据的所有者告诉系统，同意授权第三方应用进入系统，获取这些数据。系统从而产生一个短期的进入令牌（token），用来代替密码，供第三方应用使用。参见[Link](http://www.ruanyifeng.com/blog/2019/04/oauth_design.html)
+## OAuth2和JWT的关系
+个人理解，JWT是一种Token生成和校验的方法，OAuth2也用到了技术。OAuth2利用JWT技术，实现了第三方授权机制的验证模式。OAuth2的实现机制有多种选择。
+* 上面JWT实现的保护和OAuth2的相同点
+都生成Token给客户端。目的是，提供一个短期令牌（而不是密码）给客户端，让客户端可以在短期内利用这个令牌，不再用用户授权，就可以访问受保护的资源。
+* 上面JWT实现的保护和OAuth2的不同的地方
+JWT方法需要客户端提供用户名和密码（或者说登录后），才提供Token，相当于把用户和客户端看成一个人了。而OAuth将客户端和用户分离，客户端和用户之间通过权限服务器沟通，用户授权权限服务器可以给此客户端Token，服务器就生成Token给此客户端用。这样做的好处是，用户的用户名和密码只有用户知道，权限服务器和客户端都不知道。
+## 示例代码
+* [go-oauth-simple-demo](./code/oauth/main.go)
+* 此代码是简化的示例，用户授权的过程体现在事先定死的`CLIENT_ID`和`CLIENT_SECRET`。只要权限服务收到此客户端的Token申请需求，就生成Token给客户端。
+* 执行流程：
+    - 开启服务
+    > go run main
+    - 浏览器申请Token
+    > localhost:9094/token?grant_type=client_credentials&client_id=000000&client_secret=999999&scope=all
+    - 浏览器收到回复，例如
+    > {"access_token":"T2LMWRAWO_M3MBLG17S-UQ","expires_in":7200,"scope":"all","token_type":"Bearer"}
+    - 利用上面的Token，操作资源
+    > http://localhost:9094/protected?access_token=T2LMWRAWO_M3MBLG17S-UQ
+    - 收到回复
+    > Hello, I'm protected
 
 # Dig 模块
 * [go-dependency-inject-dig](./code/dig/main.go)，参考[link](https://blog.drewolson.org/dependency-injection-in-go)
