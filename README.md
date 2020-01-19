@@ -205,4 +205,10 @@ JWT方法需要客户端提供用户名和密码（或者说登录后），才�
         - 注册依赖构造函数：将所有依赖的构造函数注册给Dig(通过Provide)，单个依赖的构造可以依赖其他依赖。注意，这一步并不会执行依赖的构造（真正的构造是在第一次调用`invoke`的时候），而且Provide调用的顺序也不影响后面的依赖构造顺序。
         - 完成依赖注册：Dig返回一个`Container`，包含所有依赖的信息。此时，所有的依赖依旧还没有构造。
         - 调用依赖函数：当第一次调用`Container.Inoke(...)`时，构造所有依赖。`Inoke`函数用于调用所有依赖的方法。
-   
+
+# Redis和Buntdb数据存储模块
+* [go-redis](./code/redis/main.go) 和 [go-buntdb](./code/buntdb/main.go)
+    - 两者都支持`key-value`的存储
+    - `buntdb`支持直接存入文件，而且不需要额外安装`redis`软件
+    - `redis`对大量数据效率可能更好
+
