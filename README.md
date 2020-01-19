@@ -45,6 +45,10 @@
     - `c *gin.Context`是回调函数接收的参数
     - `c.ShouldBind(&person)`接受`gin.Context`赋值
     - `type Persion struct`定义了`Form`结构，定义key-value，和顺序无关
+* [gin-input-from-path](./code/gin/input/path.go)
+    - 在浏览器中输入：
+    > localhost:8085/testing/1
+    - 服务器端得到id的值为1
 ## 发送JSON数据给客户
 * [gin-output-with-json](./code/gin/output/main.go)
     - 在浏览器中输入以下测试数据：
