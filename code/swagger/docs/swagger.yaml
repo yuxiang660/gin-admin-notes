@@ -1,0 +1,68 @@
+basePath: /
+definitions:
+  main.User:
+    properties:
+      password:
+        description: Password from client
+        type: string
+      username:
+        description: Username from client
+        type: string
+    type: object
+host: 127.0.0.1:8080
+info:
+  contact:
+    email: tester@gmail.com
+    name: Tester
+  description: Test for Swagger
+  license: {}
+  title: Swagger Test
+  version: 0.1.0
+paths:
+  /api:
+    get:
+      parameters:
+      - description: Message
+        in: query
+        name: message
+        type: string
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      summary: Gets a message from client
+      tags:
+      - Message Management
+    options:
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      summary: Get Options
+      tags:
+      - Methods
+    post:
+      parameters:
+      - description: Register a user
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/main.User'
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+        "400":
+          description: We need username and password!!
+          schema:
+            type: string
+      summary: Login
+      tags:
+      - User Management
+schemes:
+- http
+swagger: "2.0"

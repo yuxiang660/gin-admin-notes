@@ -1,0 +1,104 @@
+{
+    "schemes": [
+        "http"
+    ],
+    "swagger": "2.0",
+    "info": {
+        "description": "Test for Swagger",
+        "title": "Swagger Test",
+        "contact": {
+            "name": "Tester",
+            "email": "tester@gmail.com"
+        },
+        "license": {},
+        "version": "0.1.0"
+    },
+    "host": "127.0.0.1:8080",
+    "basePath": "/",
+    "paths": {
+        "/api": {
+            "get": {
+                "tags": [
+                    "Message Management"
+                ],
+                "summary": "Gets a message from client",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Message",
+                        "name": "message",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "User Management"
+                ],
+                "summary": "Login",
+                "parameters": [
+                    {
+                        "description": "Register a user",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/main.User"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "We need username and password!!",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "options": {
+                "tags": [
+                    "Methods"
+                ],
+                "summary": "Get Options",
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "main.User": {
+            "type": "object",
+            "properties": {
+                "password": {
+                    "description": "Password from client",
+                    "type": "string"
+                },
+                "username": {
+                    "description": "Username from client",
+                    "type": "string"
+                }
+            }
+        }
+    }
+}
