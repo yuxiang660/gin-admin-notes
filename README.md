@@ -125,7 +125,7 @@
     - 用`Postman`模拟客户端行为
         - 发送Get请求到：http://localhost:8000/welcome
         > 收到`401 Unauthorized`错误，因为我们没有登录验证
-        - 发送Post请求到：http://localhost:8000/login , 并带上JSON格式的用户户名密码`{"username":"user1","password":"password2"}`。服务器写死了两个用户：user1和user2。
+        - 发送Post请求到：http://localhost:8000/login , 并带上JSON格式的用户户名密码`{"username":"user1","password":"password1"}`。服务器写死了两个用户：user1和user2。
         > 验证成功，服务器发送了Cookie给客户端
         - 打开Postman的`Cookies`串口，发现`localhost`下多了一个`token`Cookie，这就是服务器发送过来的，里面由token信息
         - 再次发送Get请求到：http://localhost:8000/welcome

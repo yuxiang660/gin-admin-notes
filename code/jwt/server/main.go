@@ -29,19 +29,12 @@ type Credentials struct {
 	Username string `json:"username"`
 }
 
-type Claims struct {
-	Username string `json:"username"`
-	jwt.StandardClaims
-}
-
 func getToken(username string, expirationTime time.Time) (token string, err error) {
-	claims := &Claims{
-		Username: username,
-		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: expirationTime.Unix(),
-		},
-	}
-	token, err = jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString(jwtKey)
+	token, err = jwt.NewWithClaims(jwt.SigningMethodHS256, &jwt.StandardClaims{
+		ExpiresAt: expirationTime.Unix(),
+		Subject: username,
+	}).SignedString(jwtKey)
+
 	return
 }
 
@@ -91,8 +84,7 @@ func Welcome(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	claims := &Claims{}
-	tkn, err := jwt.ParseWithClaims(c.Value, claims, func(token *jwt.Token) (interface{}, error) {
+	tkn, err := jwt.ParseWithClaims(c.Value, &jwt.StandardClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return jwtKey, nil
 	})
 	if err != nil {
@@ -110,5 +102,11 @@ func Welcome(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Write([]byte(fmt.Sprintf("Welcome %s!", claims.Username)))
+	claims, ok := tkn.Claims.(*jwt.StandardClaims)
+	if !ok {
+		log.Println("Internal Error!")
+		return
+	}
+
+	w.Write([]byte(fmt.Sprintf("Welcome %s!", claims.Subject)))
 }
