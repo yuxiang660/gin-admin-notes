@@ -72,6 +72,12 @@
 ## 静态文件路由配置
 * [gin-static-router-server](./code/gin/static/main.go)
     - 有三种方法可以配置静态服务路由
+## Gin Group
+* [gin-router-group](./code/gin/group/main.go)
+    - 在`Group`上绑定的中间件和根上绑定中间件的区别
+        - `Group`上绑定的中间件只会在当前`Group`下已经指定的URL下才会执行
+        - `Group`根上的中间件，不需要指定URL方法，就会执行
+        - 例如，例子中必须在`localhost:8080/api/test`下才会触发中间件，而如果中间件直接在`router`根下绑定，任何以`/api`为前缀的URL都会触发此中间件。
 
 # Logger logrus
 ## 基本输出格式
