@@ -8,9 +8,11 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 )
 
+type Model gorm.Model
+
 // Product ...
 type Product struct {
-	gorm.Model
+	Model
 	Code string `json:"code"`
 	Price uint `json:"price"`
 }
