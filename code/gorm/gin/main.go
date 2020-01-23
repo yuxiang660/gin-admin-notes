@@ -58,6 +58,7 @@ func main() {
 		panic("failed to connect database")
 	}
 	defer db.Close()
+	db = db.Debug()
 
 	model := ProductModel{db: db}
 
